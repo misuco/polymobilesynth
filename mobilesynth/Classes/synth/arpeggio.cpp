@@ -71,7 +71,7 @@ int Arpeggio::GetNote() {
         }
      }
     } else {
-      note_ = random() % max;
+      note_ = rand() % max;
     }
   }
   sample_ = (sample_ + 1) % samples_per_note_;
