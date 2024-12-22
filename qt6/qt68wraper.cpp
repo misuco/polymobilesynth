@@ -1,21 +1,6 @@
-/*
- 
- Copyright (C) 2013 by Claudio Zopfi, Zurich, Suisse, z@x21.ch
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
- */
+// /^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\v/^\
+// Copyright (C) 2024 c1audio.com / Claudio Zopfi <c1audio@x21.ch>
+// SPDX-License-Identifier: GPL-3.0
 
 #include <QtGlobal>
 #ifndef Q_OS_IOS
@@ -30,24 +15,10 @@
 #include <qendian.h>
 
 
-mobileSynthQT68::mobileSynthQT68()
+Qt68Wraper::Qt68Wraper()
     :   QIODevice()
-   // ,   m_device(QMediaDevices::defaultAudioOutput())
-
 {
     BufferSize        = 1024;
-    //BufferSize        = 16384;
-
-    /*
-    qDebug() << "mobileSynthQT52::size " << size();
-    for(auto &device:QMediaDevices::audioOutputs()) {
-        qDebug() << "****" << device.id() << " " << device.description() ;
-        if( device.isDefault()) {
-            m_device=device;
-            qDebug() << "------------------------------------------";
-        }
-    }
-    */
 
     syctl = new synth::Controller();
 
@@ -68,32 +39,15 @@ mobileSynthQT68::mobileSynthQT68()
     syctl->set_filter_cutoff(1000);
     syctl->set_filter_resonance(0.1);
 
-
     channelBytes = m_format.bytesPerSample();
     channelCount = m_format.channelCount();
     sampleType = m_format.sampleFormat();// == QAudioFormat::UInt8 ? 0 : 1;
     sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
 
     qDebug() << "sampleType " <<  sampleType << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
-    //syctl->setFormat(sampleType,channelCount,channelBytes,sampleLittleEndian);
-
-    /*
-
-    m_audioOutput=new QAudioSink(QMediaDevices::defaultAudioOutput(), m_format);
-    //m_audioOutput->reset( = new QAudioOutput(m_device, this);
-    //m_audioOutput->setBufferSize(BufferSize);
-
-    this->start();
-    //qDebug() << "buffer size is " << m_audioOutput->bufferSize();
-
-    m_audioOutput->reset();
-    m_audioOutput->resume();
-    m_audioOutput->start(this);
-    */
-
 }
 
-mobileSynthQT68::~mobileSynthQT68()
+Qt68Wraper::~Qt68Wraper()
 {
     //m_audioOutput->stop();
     this->stop();
@@ -101,19 +55,19 @@ mobileSynthQT68::~mobileSynthQT68()
     delete(m_audioOutput);
 }
 
-void mobileSynthQT68::start()
+void Qt68Wraper::start()
 {
     qDebug() << "mobileSynthQT68::start";
     open(QIODevice::ReadOnly);
 }
 
-void mobileSynthQT68::stop()
+void Qt68Wraper::stop()
 {
     qDebug() << "mobileSynthQT68::stop";
     close();
 }
 
-qint64 mobileSynthQT68::readData(char *data, qint64 len)
+qint64 Qt68Wraper::readData(char *data, qint64 len)
 {
     qint64 len_ret=len;
     //qDebug() << "mobileSynthQT68::readData " << len ;
@@ -208,7 +162,7 @@ qint64 mobileSynthQT68::readData(char *data, qint64 len)
     return len_ret;
 }
 
-qint64 mobileSynthQT68::writeData(const char *data, qint64 len)
+qint64 Qt68Wraper::writeData(const char *data, qint64 len)
 {
     Q_UNUSED(data);
     Q_UNUSED(len);
@@ -216,19 +170,19 @@ qint64 mobileSynthQT68::writeData(const char *data, qint64 len)
     return 0;
 }
 
-qint64 mobileSynthQT68::bytesAvailable() const
+qint64 Qt68Wraper::bytesAvailable() const
 {
     //qDebug() << "mobileSynthQT68::bytesAvailable";
     return 16384;
 }
 
-qint64 mobileSynthQT68::size() const
+qint64 Qt68Wraper::size() const
 {
     //qDebug() << "mobileSynthQT68::size";
     return 16384;
 }
 
-void mobileSynthQT68::noteOn(int vid, float f)
+void Qt68Wraper::noteOn(int vid, float f)
 {
     qDebug() << "mobileSynthQT68::noteOn vid:" << vid << " f: " << f;
     //syctl->setADSR(0,10000,10000,1.0f,80000);
@@ -237,7 +191,7 @@ void mobileSynthQT68::noteOn(int vid, float f)
     syctl->NoteOn(vid);
 }
 
-void mobileSynthQT68::noteOff(int vid)
+void Qt68Wraper::noteOff(int vid)
 {
     qDebug() << "mobileSynthQT68::noteOff vid:" << vid;
     syctl->NoteOff(vid);

@@ -16,39 +16,13 @@
 
 #include <math.h>
 
-/*
-class Generator : public QIODevice
+class MobileSynth : public QObject
 {
     Q_OBJECT
 
 public:
-    Generator(const QAudioFormat &format, qint64 durationUs, int sampleRate);
-
-    void start();
-    void stop();
-
-    qint64 readData(char *data, qint64 maxlen) override;
-    qint64 writeData(const char *data, qint64 len) override;
-    qint64 bytesAvailable() const override;
-    qint64 size() const override { return m_buffer.size(); }
-
-private:
-    void generateData(const QAudioFormat &format, qint64 durationUs, int sampleRate);
-
-private:
-    qint64 m_pos = 0;
-    QByteArray m_buffer;
-};
-
-*/
-
-class AudioOutput : public QObject
-{
-    Q_OBJECT
-
-public:
-    AudioOutput();
-    ~AudioOutput();
+    MobileSynth();
+    ~MobileSynth();
 
     Q_INVOKABLE void noteOn(int vid, float f);
     Q_INVOKABLE void noteOff(int vid);
@@ -78,7 +52,7 @@ private:
     QTimer *m_pushTimer = nullptr;
 
     //QScopedPointer<Generator> m_generator;
-    QScopedPointer<mobileSynthQT68> m_generator;
+    QScopedPointer<Qt68Wraper> m_generator;
     QScopedPointer<QAudioSink> m_audioOutput;
 
     bool m_pullMode = true;

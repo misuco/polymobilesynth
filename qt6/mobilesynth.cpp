@@ -9,121 +9,32 @@
 #include <QtEndian>
 #include <QtMath>
 
-/*
-Generator::Generator(const QAudioFormat &format, qint64 durationUs, int sampleRate)
-{
-    if (format.isValid())
-        generateData(format, durationUs, sampleRate);
-}
-
-void Generator::start()
-{
-    open(QIODevice::ReadOnly);
-}
-
-void Generator::stop()
-{
-    m_pos = 0;
-    close();
-}
-
-void Generator::generateData(const QAudioFormat &format, qint64 durationUs, int sampleRate)
-{
-    const int channelBytes = format.bytesPerSample();
-    const int sampleBytes = format.channelCount() * channelBytes;
-    qint64 length = format.bytesForDuration(durationUs);
-    Q_ASSERT(length % sampleBytes == 0);
-    Q_UNUSED(sampleBytes); // suppress warning in release builds
-
-    m_buffer.resize(length);
-    unsigned char *ptr = reinterpret_cast<unsigned char *>(m_buffer.data());
-    int sampleIndex = 0;
-
-    while (length) {
-        // Produces value (-1..1)
-        const qreal x = qSin(2 * M_PI * sampleRate * qreal(sampleIndex++ % format.sampleRate())
-                             / format.sampleRate());
-        for (int i = 0; i < format.channelCount(); ++i) {
-            switch (format.sampleFormat()) {
-            case QAudioFormat::UInt8:
-                *reinterpret_cast<quint8 *>(ptr) = static_cast<quint8>((1.0 + x) / 2 * 255);
-                break;
-            case QAudioFormat::Int16:
-                *reinterpret_cast<qint16 *>(ptr) = static_cast<qint16>(x * 32767);
-                break;
-            case QAudioFormat::Int32:
-                *reinterpret_cast<qint32 *>(ptr) =
-                    static_cast<qint32>(x * std::numeric_limits<qint32>::max());
-                break;
-            case QAudioFormat::Float:
-                *reinterpret_cast<float *>(ptr) = x;
-                break;
-            default:
-                break;
-            }
-
-            ptr += channelBytes;
-            length -= channelBytes;
-        }
-    }
-}
-
-qint64 Generator::readData(char *data, qint64 len)
-{
-    qDebug() << "Generator::readData " << len;
-    qint64 total = 0;
-    if (!m_buffer.isEmpty()) {
-        while (len - total > 0) {
-            const qint64 chunk = qMin((m_buffer.size() - m_pos), len - total);
-            memcpy(data + total, m_buffer.constData() + m_pos, chunk);
-            m_pos = (m_pos + chunk) % m_buffer.size();
-            total += chunk;
-        }
-    }
-    return total;
-}
-
-qint64 Generator::writeData(const char *data, qint64 len)
-{
-    Q_UNUSED(data);
-    Q_UNUSED(len);
-
-    return 0;
-}
-
-qint64 Generator::bytesAvailable() const
-{
-    qDebug() << "Generator::bytesAvailable " << m_buffer.size() + QIODevice::bytesAvailable();
-    return m_buffer.size() + QIODevice::bytesAvailable();
-}
-*/
-
-void AudioOutput::noteOn(int vid, float f)
+void MobileSynth::noteOn(int vid, float f)
 {
     m_generator->noteOn(vid,f);
 }
 
-void AudioOutput::noteOff(int vid)
+void MobileSynth::noteOff(int vid)
 {
     m_generator->noteOff(vid);
 }
 
-void AudioOutput::set_arpeggio_enabled(bool value)
+void MobileSynth::set_arpeggio_enabled(bool value)
 {
     m_generator->getSyctl()->set_arpeggio_enabled(value);
 }
 
-void AudioOutput::set_arpeggio_samples(int value)
+void MobileSynth::set_arpeggio_samples(int value)
 {
     m_generator->getSyctl()->set_arpeggio_samples(value);
 }
 
-void AudioOutput::set_arpeggio_octaves(int value)
+void MobileSynth::set_arpeggio_octaves(int value)
 {
     m_generator->getSyctl()->set_arpeggio_octaves(value);
 }
 
-void AudioOutput::set_arpeggio_step(int value)
+void MobileSynth::set_arpeggio_step(int value)
 {
     synth::Arpeggio::Step step;
 
@@ -145,22 +56,22 @@ void AudioOutput::set_arpeggio_step(int value)
     m_generator->getSyctl()->set_arpeggio_step(step);
 }
 
-void AudioOutput::set_filter_cutoff(int value)
+void MobileSynth::set_filter_cutoff(int value)
 {
     m_generator->getSyctl()->set_filter_cutoff(value);
 }
 
-void AudioOutput::set_filter_resonance(float value)
+void MobileSynth::set_filter_resonance(float value)
 {
     m_generator->getSyctl()->set_filter_resonance(value);
 }
 
-void AudioOutput::set_osc1_level(float value)
+void MobileSynth::set_osc1_level(float value)
 {
     m_generator->getSyctl()->set_osc1_level(value);
 }
 
-synth::Oscillator::WaveType AudioOutput::int2wavetype(int value) {
+synth::Oscillator::WaveType MobileSynth::int2wavetype(int value) {
     synth::Oscillator::WaveType w;
     switch (value) {
     case 1:
@@ -182,7 +93,7 @@ synth::Oscillator::WaveType AudioOutput::int2wavetype(int value) {
     return w;
 }
 
-synth::Controller::OctaveShift AudioOutput::int2octaveshift(int value) {
+synth::Controller::OctaveShift MobileSynth::int2octaveshift(int value) {
     synth::Controller::OctaveShift o;
     switch (value) {
     case 1:
@@ -204,74 +115,74 @@ synth::Controller::OctaveShift AudioOutput::int2octaveshift(int value) {
     return o;
 }
 
-void AudioOutput::set_osc1_wave_type(int value)
+void MobileSynth::set_osc1_wave_type(int value)
 {
     m_generator->getSyctl()->set_osc1_wave_type(int2wavetype(value));
 }
 
-void AudioOutput::set_osc1_octave(int octave)
+void MobileSynth::set_osc1_octave(int octave)
 {
     m_generator->getSyctl()->set_osc1_octave(int2octaveshift(octave));
 }
 
-void AudioOutput::set_osc2_level(float value)
+void MobileSynth::set_osc2_level(float value)
 {
     m_generator->getSyctl()->set_osc2_level(value);
 }
 
-void AudioOutput::set_osc2_wave_type(int value)
+void MobileSynth::set_osc2_wave_type(int value)
 {
     m_generator->getSyctl()->set_osc2_wave_type(int2wavetype(value));
 }
 
-void AudioOutput::set_osc2_octave(int octave)
+void MobileSynth::set_osc2_octave(int octave)
 {
     m_generator->getSyctl()->set_osc2_octave(int2octaveshift(octave));
 }
 
-void AudioOutput::set_osc2_shift(int value)
+void MobileSynth::set_osc2_shift(int value)
 {
     m_generator->getSyctl()->set_osc2_shift(value);
 }
 
-void AudioOutput::set_modulation_source(int value)
+void MobileSynth::set_modulation_source(int value)
 {
     m_generator->getSyctl()->set_modulation_source(static_cast<synth::Controller::ModulationSource>(value));
 }
 
-void AudioOutput::set_modulation_destination(int value)
+void MobileSynth::set_modulation_destination(int value)
 {
     m_generator->getSyctl()->set_modulation_destination(static_cast<synth::Controller::ModulationDestination>(value));
 }
 
-void AudioOutput::set_modulation_amount(float value)
+void MobileSynth::set_modulation_amount(float value)
 {
     m_generator->getSyctl()->set_modulation_amount(value);
 }
 
-void AudioOutput::set_modulation_frequency(float value)
+void MobileSynth::set_modulation_frequency(float value)
 {
     m_generator->getSyctl()->set_modulation_frequency(value);
 }
 
-AudioOutput::AudioOutput() : m_devices(new QMediaDevices(this)), m_pushTimer(new QTimer(this))
+MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new QTimer(this))
 {
     initializeAudio(m_devices->defaultAudioOutput());
 }
 
-AudioOutput::~AudioOutput()
+MobileSynth::~MobileSynth()
 {
     m_pushTimer->stop();
 }
 
-void AudioOutput::initializeAudio(const QAudioDevice &deviceInfo)
+void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
 {
     QAudioFormat format = deviceInfo.preferredFormat();
 
     const int durationSeconds = 1;
     const int toneSampleRateHz = 600;
     //m_generator.reset(new Generator(format, durationSeconds * 1000000, toneSampleRateHz));
-    m_generator.reset(new mobileSynthQT68());
+    m_generator.reset(new Qt68Wraper());
     m_audioOutput.reset(new QAudioSink(deviceInfo, format));
     m_generator->start();
 
@@ -284,7 +195,7 @@ void AudioOutput::initializeAudio(const QAudioDevice &deviceInfo)
 }
 
 /*
-void AudioOutput::deviceChanged(int index)
+void MobileSynth::deviceChanged(int index)
 {
     m_generator->stop();
     m_audioOutput->stop();
@@ -293,7 +204,7 @@ void AudioOutput::deviceChanged(int index)
 }
 */
 
-void AudioOutput::volumeChanged(int value)
+void MobileSynth::volumeChanged(int value)
 {
     qreal linearVolume = QAudio::convertVolume(value / qreal(100), QAudio::LogarithmicVolumeScale,
                                                QAudio::LinearVolumeScale);
@@ -302,7 +213,7 @@ void AudioOutput::volumeChanged(int value)
 }
 
 /*
-void AudioOutput::updateAudioDevices()
+void MobileSynth::updateAudioDevices()
 {
     m_deviceBox->clear();
     const QList<QAudioDevice> devices = m_devices->audioOutputs();
@@ -311,7 +222,7 @@ void AudioOutput::updateAudioDevices()
 }
 */
 
-void AudioOutput::toggleMode()
+void MobileSynth::toggleMode()
 {
     m_pushTimer->stop();
     // Reset audiosink
@@ -345,7 +256,7 @@ void AudioOutput::toggleMode()
     m_pullMode = !m_pullMode;
 }
 
-void AudioOutput::toggleSuspendResume()
+void MobileSynth::toggleSuspendResume()
 {
     if (m_audioOutput->state() == QAudio::SuspendedState
         || m_audioOutput->state() == QAudio::StoppedState) {
