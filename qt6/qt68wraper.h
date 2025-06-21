@@ -37,7 +37,23 @@ public:
     qint64 bytesAvailable() const override;
     qint64 size() const override;
 
-    synth::Controller * getSyctl() {return syctl;}
+    void set_arpeggio_enabled(bool v);
+    void set_arpeggio_samples(int v);
+    void set_arpeggio_octaves(int v);
+    void set_arpeggio_step(int v);
+    void set_filter_cutoff(int v);
+    void set_filter_resonance(float v);
+    void set_osc1_level(float v);
+    void set_osc1_wave_type(synth::Oscillator::WaveType v);
+    void set_osc1_octave(synth::Controller::OctaveShift v);
+    void set_osc2_level(float v);
+    void set_osc2_wave_type(synth::Oscillator::WaveType v);
+    void set_osc2_octave(synth::Controller::OctaveShift v);
+    void set_osc2_shift(int v);
+    void set_modulation_source(synth::Controller::ModulationSource v);
+    void set_modulation_destination(synth::Controller::ModulationDestination v);
+    void set_modulation_amount(float v);
+    void set_modulation_frequency(float v);
 
 public slots:
     void noteOn(int vid, float f);
@@ -51,7 +67,8 @@ private:
     int sampleType;
     bool sampleLittleEndian;
 
-    synth::Controller * syctl;
+    QVector<synth::Controller *> syctl;
+    QVector<int> VoiceMap;
     QAudioSink *m_audioOutput;
     QIODevice *m_output; // not owned
     QAudioFormat m_format;
@@ -59,6 +76,8 @@ private:
 
     QTimer sampleTimer;
 
+    int VoiceCount;
+    qreal GetSampleSum();
 };
 
 #endif // QT68WRAPER_H

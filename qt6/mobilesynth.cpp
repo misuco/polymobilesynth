@@ -21,54 +21,37 @@ void MobileSynth::noteOff(int vid)
 
 void MobileSynth::set_arpeggio_enabled(bool value)
 {
-    m_generator->getSyctl()->set_arpeggio_enabled(value);
+    m_generator->set_arpeggio_enabled(value);
 }
 
 void MobileSynth::set_arpeggio_samples(int value)
 {
-    m_generator->getSyctl()->set_arpeggio_samples(value);
+    m_generator->set_arpeggio_samples(value);
 }
 
 void MobileSynth::set_arpeggio_octaves(int value)
 {
-    m_generator->getSyctl()->set_arpeggio_octaves(value);
+    m_generator->set_arpeggio_octaves(value);
 }
 
 void MobileSynth::set_arpeggio_step(int value)
 {
-    synth::Arpeggio::Step step;
-
-    switch(value) {
-    case 0:
-        step=synth::Arpeggio::Step::DOWN;
-        break;
-    case 1:
-        step=synth::Arpeggio::Step::UP;
-        break;
-    case 2:
-        step=synth::Arpeggio::Step::RANDOM;
-        break;
-    default:
-        step=synth::Arpeggio::Step::UP_DOWN;
-        break;
-    }
-
-    m_generator->getSyctl()->set_arpeggio_step(step);
+    m_generator->set_arpeggio_step(value);
 }
 
 void MobileSynth::set_filter_cutoff(int value)
 {
-    m_generator->getSyctl()->set_filter_cutoff(value);
+    m_generator->set_filter_cutoff(value);
 }
 
 void MobileSynth::set_filter_resonance(float value)
 {
-    m_generator->getSyctl()->set_filter_resonance(value);
+    m_generator->set_filter_resonance(value);
 }
 
 void MobileSynth::set_osc1_level(float value)
 {
-    m_generator->getSyctl()->set_osc1_level(value);
+    m_generator->set_osc1_level(value);
 }
 
 synth::Oscillator::WaveType MobileSynth::int2wavetype(int value) {
@@ -117,52 +100,52 @@ synth::Controller::OctaveShift MobileSynth::int2octaveshift(int value) {
 
 void MobileSynth::set_osc1_wave_type(int value)
 {
-    m_generator->getSyctl()->set_osc1_wave_type(int2wavetype(value));
+    m_generator->set_osc1_wave_type(int2wavetype(value));
 }
 
 void MobileSynth::set_osc1_octave(int octave)
 {
-    m_generator->getSyctl()->set_osc1_octave(int2octaveshift(octave));
+    m_generator->set_osc1_octave(int2octaveshift(octave));
 }
 
 void MobileSynth::set_osc2_level(float value)
 {
-    m_generator->getSyctl()->set_osc2_level(value);
+    m_generator->set_osc2_level(value);
 }
 
 void MobileSynth::set_osc2_wave_type(int value)
 {
-    m_generator->getSyctl()->set_osc2_wave_type(int2wavetype(value));
+    m_generator->set_osc2_wave_type(int2wavetype(value));
 }
 
 void MobileSynth::set_osc2_octave(int octave)
 {
-    m_generator->getSyctl()->set_osc2_octave(int2octaveshift(octave));
+    m_generator->set_osc2_octave(int2octaveshift(octave));
 }
 
 void MobileSynth::set_osc2_shift(int value)
 {
-    m_generator->getSyctl()->set_osc2_shift(value);
+    m_generator->set_osc2_shift(value);
 }
 
 void MobileSynth::set_modulation_source(int value)
 {
-    m_generator->getSyctl()->set_modulation_source(static_cast<synth::Controller::ModulationSource>(value));
+    m_generator->set_modulation_source(static_cast<synth::Controller::ModulationSource>(value));
 }
 
 void MobileSynth::set_modulation_destination(int value)
 {
-    m_generator->getSyctl()->set_modulation_destination(static_cast<synth::Controller::ModulationDestination>(value));
+    m_generator->set_modulation_destination(static_cast<synth::Controller::ModulationDestination>(value));
 }
 
 void MobileSynth::set_modulation_amount(float value)
 {
-    m_generator->getSyctl()->set_modulation_amount(value);
+    m_generator->set_modulation_amount(value);
 }
 
 void MobileSynth::set_modulation_frequency(float value)
 {
-    m_generator->getSyctl()->set_modulation_frequency(value);
+    m_generator->set_modulation_frequency(value);
 }
 
 MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new QTimer(this))
