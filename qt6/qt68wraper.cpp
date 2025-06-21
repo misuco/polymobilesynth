@@ -39,6 +39,14 @@ Qt68Wraper::Qt68Wraper()
         sc->set_arpeggio_step(synth::Arpeggio::UP_DOWN);
         sc->set_filter_cutoff(1000);
         sc->set_filter_resonance(0.1);
+        sc->volume_envelope()->set_attack(100);
+        sc->volume_envelope()->set_decay(10000);
+        sc->volume_envelope()->set_sustain(1.0f);
+        sc->volume_envelope()->set_release(80000);
+        sc->filter_envelope()->set_attack(80000);
+        sc->filter_envelope()->set_decay(80000);
+        sc->filter_envelope()->set_sustain(0.4f);
+        sc->filter_envelope()->set_release(80000);
         syctl.append( sc );
         VoiceMap.append( 0 );
     }
@@ -333,6 +341,62 @@ void Qt68Wraper::set_modulation_frequency(float v)
 {
     for(auto voice:syctl) {
         voice->set_modulation_frequency(v);
+    }
+}
+
+void Qt68Wraper::set_volume_attack(long v)
+{
+    for(auto voice:syctl) {
+        voice->volume_envelope()->set_attack(v);
+    }
+}
+
+void Qt68Wraper::set_volume_decay(long v)
+{
+    for(auto voice:syctl) {
+        voice->volume_envelope()->set_decay(v);
+    }
+}
+
+void Qt68Wraper::set_volume_sustain(float v)
+{
+    for(auto voice:syctl) {
+        voice->volume_envelope()->set_sustain(v);
+    }
+}
+
+void Qt68Wraper::set_volume_release(long v)
+{
+    for(auto voice:syctl) {
+        voice->volume_envelope()->set_release(v);
+    }
+}
+
+void Qt68Wraper::set_filter_attack(long v)
+{
+    for(auto voice:syctl) {
+        voice->filter_envelope()->set_attack(v);
+    }
+}
+
+void Qt68Wraper::set_filter_decay(long v)
+{
+    for(auto voice:syctl) {
+        voice->filter_envelope()->set_decay(v);
+    }
+}
+
+void Qt68Wraper::set_filter_sustain(float v)
+{
+    for(auto voice:syctl) {
+        voice->filter_envelope()->set_sustain(v);
+    }
+}
+
+void Qt68Wraper::set_filter_release(long v)
+{
+    for(auto voice:syctl) {
+        voice->filter_envelope()->set_release(v);
     }
 }
 

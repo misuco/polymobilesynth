@@ -148,6 +148,46 @@ void MobileSynth::set_modulation_frequency(float value)
     m_generator->set_modulation_frequency(value);
 }
 
+void MobileSynth::set_volume_attack(long value)
+{
+    m_generator->set_volume_attack(value);
+}
+
+void MobileSynth::set_volume_decay(long value)
+{
+    m_generator->set_volume_decay(value);
+}
+
+void MobileSynth::set_volume_sustain(float value)
+{
+    m_generator->set_volume_sustain(value);
+}
+
+void MobileSynth::set_volume_release(long value)
+{
+    m_generator->set_volume_release(value);
+}
+
+void MobileSynth::set_filter_attack(long value)
+{
+    m_generator->set_filter_attack(value);
+}
+
+void MobileSynth::set_filter_decay(long value)
+{
+    m_generator->set_filter_decay(value);
+}
+
+void MobileSynth::set_filter_sustain(float value)
+{
+    m_generator->set_filter_sustain(value);
+}
+
+void MobileSynth::set_filter_release(long value)
+{
+    m_generator->set_filter_release(value);
+}
+
 MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new QTimer(this))
 {
     initializeAudio(m_devices->defaultAudioOutput());

@@ -18,6 +18,7 @@
 #include <QScopedPointer>
 #include <QTimer>
 #include <QTimerEvent>
+#include <QMap>
 
 #include <polymobilesynth/mobilesynth/Classes/synth/controller.h>
 
@@ -54,6 +55,14 @@ public:
     void set_modulation_destination(synth::Controller::ModulationDestination v);
     void set_modulation_amount(float v);
     void set_modulation_frequency(float v);
+    void set_volume_attack(long v);
+    void set_volume_decay(long v);
+    void set_volume_sustain(float v);
+    void set_volume_release(long v);
+    void set_filter_attack(long v);
+    void set_filter_decay(long v);
+    void set_filter_sustain(float v);
+    void set_filter_release(long v);
 
 public slots:
     void noteOn(int vid, float f);

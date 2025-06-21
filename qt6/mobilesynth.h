@@ -43,6 +43,14 @@ public:
     Q_INVOKABLE void set_modulation_destination(int value);
     Q_INVOKABLE void set_modulation_amount(float value);
     Q_INVOKABLE void set_modulation_frequency(float value);
+    Q_INVOKABLE void set_volume_attack(long value);
+    Q_INVOKABLE void set_volume_decay(long value);
+    Q_INVOKABLE void set_volume_sustain(float value);
+    Q_INVOKABLE void set_volume_release(long value);
+    Q_INVOKABLE void set_filter_attack(long value);
+    Q_INVOKABLE void set_filter_decay(long value);
+    Q_INVOKABLE void set_filter_sustain(float value);
+    Q_INVOKABLE void set_filter_release(long value);
 
 private:
     void initializeAudio(const QAudioDevice &deviceInfo);
