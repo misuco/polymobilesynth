@@ -54,6 +54,11 @@ void MobileSynth::set_osc1_level(float value)
     m_generator->set_osc1_level(value);
 }
 
+void MobileSynth::pitch(int vid, float f)
+{
+    m_generator->pitch(vid,f);
+}
+
 synth::Oscillator::WaveType MobileSynth::int2wavetype(int value) {
     synth::Oscillator::WaveType w;
     switch (value) {

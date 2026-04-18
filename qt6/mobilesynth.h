@@ -51,6 +51,7 @@ public:
     Q_INVOKABLE void set_filter_decay(long value);
     Q_INVOKABLE void set_filter_sustain(float value);
     Q_INVOKABLE void set_filter_release(long value);
+    Q_INVOKABLE void pitch(int vid, float f);
 
 private:
     void initializeAudio(const QAudioDevice &deviceInfo);
