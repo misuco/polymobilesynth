@@ -78,6 +78,7 @@ private:
 
     QVector<synth::Controller *> syctl;
     QVector<int> VoiceMap;
+    QVector<float> VoiceFreqMap;
     QAudioSink *m_audioOutput;
     QIODevice *m_output; // not owned
     QAudioFormat m_format;

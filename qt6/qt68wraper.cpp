@@ -49,6 +49,7 @@ Qt68Wraper::Qt68Wraper()
         sc->filter_envelope()->set_release(80000);
         syctl.append( sc );
         VoiceMap.append( 0 );
+        VoiceFreqMap.append( 0 );
     }
 
     channelBytes = m_format.bytesPerSample();
@@ -70,6 +71,7 @@ Qt68Wraper::~Qt68Wraper()
     }
     syctl.clear();
     VoiceMap.clear();
+    VoiceFreqMap.clear();
     delete(m_audioOutput);
 }
 
@@ -213,8 +215,25 @@ qint64 Qt68Wraper::size() const
 void Qt68Wraper::set_arpeggio_enabled(bool v)
 {
     arpeggioEnabled = v;
-    for(auto voice:syctl) {
-        voice->set_arpeggio_enabled(v);
+
+    syctl.at(0)->set_arpeggio_enabled(v);
+
+    if(arpeggioEnabled) {
+        // transfer all active voices to voice instance 0
+        for(int i=1;i<VoiceMap.count();i++) {
+            if(VoiceMap.at(i)>0) {
+                syctl.at(i)->NoteOff(VoiceMap.at(i));
+                syctl.at(0)->NoteOn(VoiceMap.at(i),VoiceFreqMap.at(i));
+            }
+        }
+    } else {
+        // transfer all active voices to separate voice instances
+        for(int i=1;i<VoiceMap.count();i++) {
+            if(VoiceMap.at(i)>0) {
+                syctl.at(0)->NoteOff(VoiceMap.at(i));
+                syctl.at(i)->NoteOn(VoiceMap.at(i),VoiceFreqMap.at(i));
+            }
+        }
     }
 }
 
@@ -407,12 +426,21 @@ void Qt68Wraper::noteOn(int vid, float f)
 {
     qDebug() << "mobileSynthQT68::noteOn vid:" << vid << " f: " << f;
     if(arpeggioEnabled) {
-        syctl.at(0)->NoteOn(vid,f);
+        for(int i=0;i<VoiceMap.count();i++) {
+            if(VoiceMap.at(i)==0) {
+                syctl.at(0)->NoteOn(vid,f);
+                VoiceMap[i]=vid;
+                VoiceFreqMap[i]=f;
+                qDebug() << "mobileSynthQT68::noteOn mapid:" << i;
+                break;
+            }
+        }
     } else {
         for(int i=0;i<VoiceMap.count();i++) {
             if(syctl.at(i)->released()) {
                 syctl.at(i)->NoteOn(vid,f);
                 VoiceMap[i]=vid;
+                VoiceFreqMap[i]=f;
                 qDebug() << "mobileSynthQT68::noteOn mapid:" << i;
                 break;
             }
@@ -424,7 +452,14 @@ void Qt68Wraper::noteOff(int vid)
 {
     qDebug() << "mobileSynthQT68::noteOff vid:" << vid;
     if(arpeggioEnabled) {
-        syctl.at(0)->NoteOff(vid);
+        for(int i=0;i<VoiceMap.count();i++) {
+            if(VoiceMap.at(i)==vid) {
+                syctl.at(0)->NoteOff(vid);
+                VoiceMap[i]=0;
+                qDebug() << "mobileSynthQT68::noteOff mapid:" << i;
+                break;
+            }
+        }
     } else {
         for(int i=0;i<VoiceMap.count();i++) {
             if(VoiceMap.at(i)==vid) {
