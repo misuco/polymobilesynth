@@ -51,7 +51,10 @@ class Controller {
   void NoteOff(int midi_note);
   void NoteOnFrequency(float frequency);  // For testing
   void NoteOff();  // Invoked when all notes have been released as a fallback
-  
+
+  void Pitch(float frequency);
+
+
   // True when nothing is playing
   bool released() {
     return (volume_envelope()->released() || filter_envelope()->released());
@@ -128,8 +131,6 @@ class Controller {
   float GetSample();
 
   void GetFloatSamples(float* buffer, int size);
-    
-  private:
   // Invoked when one of the routing parameters changes, such as the source
   // or destination of modulation.
   void reset_routing();

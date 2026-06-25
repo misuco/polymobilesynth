@@ -422,6 +422,18 @@ void Qt68Wraper::set_filter_release(long v)
     }
 }
 
+void Qt68Wraper::pitch(int vid, float f)
+{
+    for(int i=0;i<VoiceMap.count();i++) {
+        if(VoiceMap[i]==vid) {
+            syctl.at(i)->Pitch(f);
+            qDebug() << "mobileSynthQT68::pitch vid: " << vid << "mapid: " << i << " f: " << f;
+            break;
+        }
+    }
+    qDebug() << "mobileSynthQT68::pitch ignored: vid: " << vid << " f: " << f;
+}
+
 void Qt68Wraper::noteOn(int vid, float f)
 {
     qDebug() << "mobileSynthQT68::noteOn vid:" << vid << " f: " << f;

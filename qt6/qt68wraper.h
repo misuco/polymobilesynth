@@ -64,6 +64,8 @@ public:
     void set_filter_sustain(float v);
     void set_filter_release(long v);
 
+    void pitch(int vid, float f);
+
 public slots:
     void noteOn(int vid, float f);
     void noteOff(int vid);
