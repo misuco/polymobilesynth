@@ -86,6 +86,8 @@ private:
     QTimer sampleTimer;
 
     int VoiceCount;
+    bool arpeggioEnabled;
+
     qreal GetSampleSum();
 };
 

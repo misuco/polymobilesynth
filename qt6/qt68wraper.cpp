@@ -56,6 +56,8 @@ Qt68Wraper::Qt68Wraper()
     sampleType = m_format.sampleFormat();// == QAudioFormat::UInt8 ? 0 : 1;
     sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
 
+    arpeggioEnabled = false;
+
     qDebug() << "sampleType " <<  sampleType << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
 }
 
@@ -210,6 +212,7 @@ qint64 Qt68Wraper::size() const
 
 void Qt68Wraper::set_arpeggio_enabled(bool v)
 {
+    arpeggioEnabled = v;
     for(auto voice:syctl) {
         voice->set_arpeggio_enabled(v);
     }
@@ -403,13 +406,16 @@ void Qt68Wraper::set_filter_release(long v)
 void Qt68Wraper::noteOn(int vid, float f)
 {
     qDebug() << "mobileSynthQT68::noteOn vid:" << vid << " f: " << f;
-    //syctl->setADSR(0,10000,10000,1.0f,80000);
-    for(int i=0;i<VoiceMap.count();i++) {
-        if(syctl.at(i)->released()) {
-            syctl.at(i)->NoteOnFrequency(f);
-            VoiceMap[i]=vid;
-            qDebug() << "mobileSynthQT68::noteOn mapid:" << i;
-            break;
+    if(arpeggioEnabled) {
+        syctl.at(0)->NoteOn(vid,f);
+    } else {
+        for(int i=0;i<VoiceMap.count();i++) {
+            if(syctl.at(i)->released()) {
+                syctl.at(i)->NoteOn(vid,f);
+                VoiceMap[i]=vid;
+                qDebug() << "mobileSynthQT68::noteOn mapid:" << i;
+                break;
+            }
         }
     }
 }
@@ -417,11 +423,16 @@ void Qt68Wraper::noteOn(int vid, float f)
 void Qt68Wraper::noteOff(int vid)
 {
     qDebug() << "mobileSynthQT68::noteOff vid:" << vid;
-    for(int i=0;i<VoiceMap.count();i++) {
-        if(VoiceMap.at(i)==vid) {
-            syctl.at(i)->NoteOff(vid);
-            qDebug() << "mobileSynthQT68::noteOff mapid:" << i;
-            break;
+    if(arpeggioEnabled) {
+        syctl.at(0)->NoteOff(vid);
+    } else {
+        for(int i=0;i<VoiceMap.count();i++) {
+            if(VoiceMap.at(i)==vid) {
+                syctl.at(i)->NoteOff(vid);
+                VoiceMap[i]=0;
+                qDebug() << "mobileSynthQT68::noteOff mapid:" << i;
+                break;
+            }
         }
     }
 }

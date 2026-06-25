@@ -43,18 +43,32 @@ void Controller::set_sample_rate(float sample_rate) {
 }
 
 void Controller::NoteOn(int note) {
-  assert(note >= 1);
-  assert(note <= 88);
-  key_stack_.NoteOn(note);
-  if (key_stack_.size() == 1) {
-    // This is the first note played, so start attacking
-    key_lag_processor_.reset();
-    arpeggio_.reset();
-    volume_envelope()->NoteOn();
-    filter_envelope()->NoteOn();
-  }
-  float frequency = KeyToFrequency(key_stack_.GetCurrentNote());
-  key_frequency_.set_value(frequency);
+    assert(note >= 1);
+    assert(note <= 88);
+    key_stack_.NoteOn(note);
+    if (key_stack_.size() == 1) {
+        // This is the first note played, so start attacking
+        key_lag_processor_.reset();
+        arpeggio_.reset();
+        volume_envelope()->NoteOn();
+        filter_envelope()->NoteOn();
+    }
+    float frequency = KeyToFrequency(key_stack_.GetCurrentNote());
+    key_frequency_.set_value(frequency);
+}
+
+void Controller::NoteOn(int note,float frequency) {
+    assert(note >= 1);
+    assert(note <= 88);
+    key_stack_.NoteOn(note);
+    if (key_stack_.size() == 1) {
+        // This is the first note played, so start attacking
+        key_lag_processor_.reset();
+        arpeggio_.reset();
+        volume_envelope()->NoteOn();
+        filter_envelope()->NoteOn();
+    }
+    key_frequency_.set_value(frequency);
 }
 
 void Controller::NoteOnFrequency(float frequency) {

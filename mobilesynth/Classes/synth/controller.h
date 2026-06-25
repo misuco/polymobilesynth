@@ -47,6 +47,7 @@ class Controller {
   // It is an error to call NoteOff() for a note that was never the argument of
   // NoteOn();
   void NoteOn(int midi_note);
+  void NoteOn(int note, float frequency);
   void NoteOff(int midi_note);
   void NoteOnFrequency(float frequency);  // For testing
   void NoteOff();  // Invoked when all notes have been released as a fallback
@@ -127,8 +128,8 @@ class Controller {
   float GetSample();
 
   void GetFloatSamples(float* buffer, int size);
-  
- private:
+    
+  private:
   // Invoked when one of the routing parameters changes, such as the source
   // or destination of modulation.
   void reset_routing();
