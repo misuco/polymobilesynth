@@ -126,72 +126,85 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                const quint8 value = static_cast<quint8>((1.0 + x) / 2 * 255);
-                *reinterpret_cast<quint8*>(ptr) = value;
+                for(int i=0;i<channelCount;i++) {
+                    const quint8 value = static_cast<quint8>((1.0 + x) / 2 * 255);
+                    *reinterpret_cast<quint8*>(ptr) = value;
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
         } else if (channelBytes == 1  && sampleFormat == 1 /* QAudioFormat::SignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                const qint8 value = static_cast<qint8>(x * 127);
-                *reinterpret_cast<quint8*>(ptr) = value;
+                for(int i=0;i<channelCount;i++) {
+                    const qint8 value = static_cast<qint8>(x * 127);
+                    *reinterpret_cast<quint8*>(ptr) = value;
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
 
         } else if (channelBytes == 2 && sampleFormat == 0 && sampleLittleEndian == true /* QAudioFormat::UnSignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                quint16 value = static_cast<quint16>((1.0 + x) / 2 * 65535);
-                qToLittleEndian<quint16>(value, ptr);
+                for(int i=0;i<channelCount;i++) {
+                    quint16 value = static_cast<quint16>((1.0 + x) / 2 * 65535);
+                    qToLittleEndian<quint16>(value, ptr);
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
         } else if (channelBytes == 2 && sampleFormat == 0 && sampleLittleEndian == false /* QAudioFormat::UnSignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                quint16 value = static_cast<quint16>((1.0 + x) / 2 * 65535);
-                qToBigEndian<quint16>(value, ptr);
+                for(int i=0;i<channelCount;i++) {
+                    quint16 value = static_cast<quint16>((1.0 + x) / 2 * 65535);
+                    qToBigEndian<quint16>(value, ptr);
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
         } else if (channelBytes == 2 && sampleFormat == 1 && sampleLittleEndian == true  /* QAudioFormat::SignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                qint16 value = static_cast<qint16>(x * 32767);
-                qToLittleEndian<qint16>(value, ptr);
+                for(int i=0;i<channelCount;i++) {
+                    qint16 value = static_cast<qint16>(x * 32767);
+                    qToLittleEndian<qint16>(value, ptr);
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
         } else if (channelBytes == 2 && sampleFormat == 1 && sampleLittleEndian == false  /* QAudioFormat::SignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                qint16 value = static_cast<qint16>(x * 32767);
-                qToBigEndian<qint16>(value, ptr);
+                for(int i=0;i<channelCount;i++) {
+                    qint16 value = static_cast<qint16>(x * 32767);
+                    qToBigEndian<qint16>(value, ptr);
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
         } else if (channelBytes == 4 && sampleFormat == 4 /* QAudioFormat::Float */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
-                //const quint8 value = static_cast<quint8>((1.0 + x) / 2 * 255);
-                *reinterpret_cast<float*>(ptr) = x;
+                for(int i=0;i<channelCount;i++) {
+                    *reinterpret_cast<float*>(ptr) = x;
 
-                ptr += channelBytes;
-                len -= channelBytes;
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
             }
         }
     }
