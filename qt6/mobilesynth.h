@@ -53,6 +53,12 @@ public:
     Q_INVOKABLE void set_filter_release(long value);
     Q_INVOKABLE void pitch(int vid, float f);
 
+    Q_PROPERTY(bool clip READ get_clip NOTIFY valuesUpdated);
+    Q_PROPERTY(qreal peak READ get_peak NOTIFY valuesUpdated);
+
+signals:
+    void valuesUpdated();
+
 private:
     void initializeAudio(const QAudioDevice &deviceInfo);
 
@@ -68,6 +74,9 @@ private:
 
     synth::Oscillator::WaveType int2wavetype(int value);
     synth::Controller::OctaveShift int2octaveshift(int value);
+
+    bool get_clip();
+    qreal get_peak();
 
 private slots:
     void toggleMode();

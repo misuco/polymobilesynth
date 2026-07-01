@@ -103,6 +103,16 @@ synth::Controller::OctaveShift MobileSynth::int2octaveshift(int value) {
     return o;
 }
 
+bool MobileSynth::get_clip()
+{
+    return m_generator->get_clip();
+}
+
+qreal MobileSynth::get_peak()
+{
+    return m_generator->get_peak();
+}
+
 void MobileSynth::set_osc1_wave_type(int value)
 {
     m_generator->set_osc1_wave_type(int2wavetype(value));
@@ -210,9 +220,12 @@ void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
     const int durationSeconds = 1;
     const int toneSampleRateHz = 600;
     //m_generator.reset(new Generator(format, durationSeconds * 1000000, toneSampleRateHz));
+
     m_generator.reset(new Qt68Wraper());
     m_audioOutput.reset(new QAudioSink(deviceInfo, format));
     m_generator->start();
+
+    QObject::connect(m_generator.get(), &Qt68Wraper::valuesUpdated, this, [this]{qDebug() << "valuesUpdated"; emit valuesUpdated();});
 
     /*
     qreal initialVolume = QAudio::convertVolume(m_audioOutput->volume(), QAudio::LinearVolumeScale,

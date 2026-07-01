@@ -38,6 +38,11 @@ public:
     qint64 bytesAvailable() const override;
     qint64 size() const override;
 
+    bool get_clip();
+    qint64 get_clip_len();
+    qreal get_peak();
+    int get_buffer_size();
+
     void set_arpeggio_enabled(bool v);
     void set_arpeggio_samples(int v);
     void set_arpeggio_octaves(int v);
@@ -66,6 +71,9 @@ public:
 
     void pitch(int vid, float f);
 
+signals:
+    void valuesUpdated();
+
 public slots:
     void noteOn(int vid, float f);
     void noteOff(int vid);
@@ -77,6 +85,12 @@ private:
     int channelCount;
     int sampleType;
     bool sampleLittleEndian;
+
+    qint64 readDataLen;
+    qreal peakValue;
+    bool clip;
+    qint64 clipLen;
+    qint64 clipLenMax;
 
     QVector<synth::Controller *> syctl;
     QVector<int> VoiceMap;

@@ -88,27 +88,35 @@ void Qt68Wraper::stop()
 }
 
 qreal Qt68Wraper::GetSampleSum() {
+
+    // mix the value of all synth voices
     qreal x=0;
     for(auto voice:syctl) {
         x+=voice->GetSample();
     }
     x = fmaxf(-1.0f, x);
     x = fminf(1.0f, x);
+
+    // calculate peak and clip
+    qreal xAbs = fabs(x);
+    peakValue = fmaxf(peakValue,xAbs);
+    if(xAbs==1) {
+        clip=true;
+        clipLen++;
+        clipLenMax = qMax(clipLen,clipLenMax);
+    } else {
+        clipLen=0;
+    }
     return x;
 }
 
 qint64 Qt68Wraper::readData(char *data, qint64 len)
 {
-    qint64 len_ret=len;
-    //qDebug() << "mobileSynthQT68::readData " << len ;
-
-    //TODO: why this dirty hack? why does windows request odd lens
-    /*
-    if(len%2!=0) {
-        qDebug() << "mobileSynthQT52::readData odd len " << len;
-        len-=1;
-    }
-    */
+    readDataLen=len;
+    peakValue = 0;
+    clip = false;
+    clipLen = 0;
+    clipLenMax = 0;
 
     if(channelBytes>0) {
         unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
@@ -189,7 +197,9 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
     }
 
     //qDebug() << "mobileSynthQT68::readData done " << len ;
-    return len_ret;
+
+    emit valuesUpdated();
+    return readDataLen;
 }
 
 qint64 Qt68Wraper::writeData(const char *data, qint64 len)
@@ -210,6 +220,26 @@ qint64 Qt68Wraper::size() const
 {
     //qDebug() << "mobileSynthQT68::size";
     return 16384;
+}
+
+bool Qt68Wraper::get_clip()
+{
+    return clip;
+}
+
+qint64 Qt68Wraper::get_clip_len()
+{
+    return clipLenMax;
+}
+
+qreal Qt68Wraper::get_peak()
+{
+    return peakValue;
+}
+
+int Qt68Wraper::get_buffer_size()
+{
+    return BufferSize;
 }
 
 void Qt68Wraper::set_arpeggio_enabled(bool v)
