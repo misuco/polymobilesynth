@@ -54,12 +54,12 @@ Qt68Wraper::Qt68Wraper()
 
     channelBytes = m_format.bytesPerSample();
     channelCount = m_format.channelCount();
-    sampleType = m_format.sampleFormat();// == QAudioFormat::UInt8 ? 0 : 1;
+    sampleFormat = m_format.sampleFormat();// == QAudioFormat::UInt8 ? 0 : 1;
     sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
 
     arpeggioEnabled = false;
 
-    qDebug() << "sampleType " <<  sampleType << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
+    qDebug() << "sampleType " <<  sampleFormat << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
 }
 
 Qt68Wraper::~Qt68Wraper()
@@ -122,7 +122,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
         unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
         //int sampleBytes = channelCount * channelBytes;
 
-        if (channelBytes == 1 && sampleType == 0 /* QAudioFormat::UnSignedInt */) {
+        if (channelBytes == 1 && sampleFormat == 0 /* QAudioFormat::UnSignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -132,7 +132,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                 ptr += channelBytes;
                 len -= channelBytes;
             }
-        } else if (channelBytes == 1  && sampleType == 1 /* QAudioFormat::SignedInt */) {
+        } else if (channelBytes == 1  && sampleFormat == 1 /* QAudioFormat::SignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -143,7 +143,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                 len -= channelBytes;
             }
 
-        } else if (channelBytes == 2 && sampleType == 0 && sampleLittleEndian == true /* QAudioFormat::UnSignedInt */) {
+        } else if (channelBytes == 2 && sampleFormat == 0 && sampleLittleEndian == true /* QAudioFormat::UnSignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -153,7 +153,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                 ptr += channelBytes;
                 len -= channelBytes;
             }
-        } else if (channelBytes == 2 && sampleType == 0 && sampleLittleEndian == false /* QAudioFormat::UnSignedInt */) {
+        } else if (channelBytes == 2 && sampleFormat == 0 && sampleLittleEndian == false /* QAudioFormat::UnSignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -163,7 +163,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                 ptr += channelBytes;
                 len -= channelBytes;
             }
-        } else if (channelBytes == 2 && sampleType == 1 && sampleLittleEndian == true  /* QAudioFormat::SignedInt */) {
+        } else if (channelBytes == 2 && sampleFormat == 1 && sampleLittleEndian == true  /* QAudioFormat::SignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -173,7 +173,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                 ptr += channelBytes;
                 len -= channelBytes;
             }
-        } else if (channelBytes == 2 && sampleType == 1 && sampleLittleEndian == false  /* QAudioFormat::SignedInt */) {
+        } else if (channelBytes == 2 && sampleFormat == 1 && sampleLittleEndian == false  /* QAudioFormat::SignedInt */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -183,7 +183,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                 ptr += channelBytes;
                 len -= channelBytes;
             }
-        } else if (channelBytes == 4 && sampleType == 4 /* QAudioFormat::Float */) {
+        } else if (channelBytes == 4 && sampleFormat == 4 /* QAudioFormat::Float */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -198,7 +198,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
 
     //qDebug() << "mobileSynthQT68::readData done " << len ;
 
-    emit valuesUpdated();
+    emit sampleUpdated();
     return readDataLen;
 }
 
@@ -222,6 +222,11 @@ qint64 Qt68Wraper::size() const
     return 16384;
 }
 
+qint64 Qt68Wraper::get_read_data_len()
+{
+    return readDataLen;
+}
+
 bool Qt68Wraper::get_clip()
 {
     return clip;
@@ -240,6 +245,31 @@ qreal Qt68Wraper::get_peak()
 int Qt68Wraper::get_buffer_size()
 {
     return BufferSize;
+}
+
+int Qt68Wraper::get_sample_rate()
+{
+    return DataSampleRateHz;
+}
+
+int Qt68Wraper::get_channel_bytes()
+{
+    return channelBytes;
+}
+
+int Qt68Wraper::get_channel_count()
+{
+    return channelCount;
+}
+
+int Qt68Wraper::get_sample_format()
+{
+    return sampleFormat;
+}
+
+bool Qt68Wraper::get_sample_little_endian()
+{
+    return sampleLittleEndian;
 }
 
 void Qt68Wraper::set_arpeggio_enabled(bool v)

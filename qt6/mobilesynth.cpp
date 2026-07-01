@@ -103,14 +103,49 @@ synth::Controller::OctaveShift MobileSynth::int2octaveshift(int value) {
     return o;
 }
 
+qint64 MobileSynth::get_read_data_len()
+{
+    return m_generator->get_read_data_len();
+}
+
 bool MobileSynth::get_clip()
 {
     return m_generator->get_clip();
 }
 
+qint64 MobileSynth::get_clip_len()
+{
+    return m_generator->get_clip_len();
+}
+
 qreal MobileSynth::get_peak()
 {
     return m_generator->get_peak();
+}
+
+int MobileSynth::get_sample_rate()
+{
+    return m_generator->get_sample_rate();
+}
+
+int MobileSynth::get_channel_bytes()
+{
+    return m_generator->get_channel_bytes();
+}
+
+int MobileSynth::get_channel_count()
+{
+    return m_generator->get_channel_count();
+}
+
+int MobileSynth::get_sample_format()
+{
+    return m_generator->get_sample_format();
+}
+
+bool MobileSynth::get_sample_little_endian()
+{
+    return m_generator->get_sample_little_endian();
 }
 
 void MobileSynth::set_osc1_wave_type(int value)
@@ -217,15 +252,12 @@ void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
 {
     QAudioFormat format = deviceInfo.preferredFormat();
 
-    const int durationSeconds = 1;
-    const int toneSampleRateHz = 600;
-    //m_generator.reset(new Generator(format, durationSeconds * 1000000, toneSampleRateHz));
-
     m_generator.reset(new Qt68Wraper());
     m_audioOutput.reset(new QAudioSink(deviceInfo, format));
     m_generator->start();
 
-    QObject::connect(m_generator.get(), &Qt68Wraper::valuesUpdated, this, [this]{qDebug() << "valuesUpdated"; emit valuesUpdated();});
+    QObject::connect(m_generator.get(), &Qt68Wraper::sampleUpdated, this, [this]{emit sampleUpdated();});
+    QObject::connect(m_generator.get(), &Qt68Wraper::formatUpdated, this, [this]{emit formatUpdated();});
 
     /*
     qreal initialVolume = QAudio::convertVolume(m_audioOutput->volume(), QAudio::LinearVolumeScale,

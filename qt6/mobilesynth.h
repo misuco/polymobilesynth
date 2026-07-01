@@ -53,11 +53,19 @@ public:
     Q_INVOKABLE void set_filter_release(long value);
     Q_INVOKABLE void pitch(int vid, float f);
 
-    Q_PROPERTY(bool clip READ get_clip NOTIFY valuesUpdated);
-    Q_PROPERTY(qreal peak READ get_peak NOTIFY valuesUpdated);
+    Q_PROPERTY(bool clip READ get_clip NOTIFY sampleUpdated);
+    Q_PROPERTY(qint64 clipLen READ get_clip_len NOTIFY sampleUpdated);
+    Q_PROPERTY(qreal peak READ get_peak NOTIFY sampleUpdated);
+    Q_PROPERTY(int readDataLen READ get_read_data_len NOTIFY sampleUpdated);
+    Q_PROPERTY(int sampleRate READ get_sample_rate NOTIFY formatUpdated);
+    Q_PROPERTY(int channelBytes READ get_channel_bytes NOTIFY formatUpdated);
+    Q_PROPERTY(int channelCount READ get_channel_count NOTIFY formatUpdated);
+    Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
+    Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
 
 signals:
-    void valuesUpdated();
+    void sampleUpdated();
+    void formatUpdated();
 
 private:
     void initializeAudio(const QAudioDevice &deviceInfo);
@@ -66,7 +74,6 @@ private:
     QMediaDevices *m_devices = nullptr;
     QTimer *m_pushTimer = nullptr;
 
-    //QScopedPointer<Generator> m_generator;
     QScopedPointer<Qt68Wraper> m_generator;
     QScopedPointer<QAudioSink> m_audioOutput;
 
@@ -75,8 +82,16 @@ private:
     synth::Oscillator::WaveType int2wavetype(int value);
     synth::Controller::OctaveShift int2octaveshift(int value);
 
+    qint64 get_read_data_len();
     bool get_clip();
+    qint64 get_clip_len();
     qreal get_peak();
+    int get_buffer_size();
+    int get_sample_rate();
+    int get_channel_bytes();
+    int get_channel_count();
+    int get_sample_format();
+    bool get_sample_little_endian();
 
 private slots:
     void toggleMode();

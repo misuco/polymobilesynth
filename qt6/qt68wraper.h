@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
 #include <QtGlobal>
-#ifndef Q_OS_IOS
 
 #ifndef QT68WRAPER_H
 #define QT68WRAPER_H
@@ -38,10 +37,16 @@ public:
     qint64 bytesAvailable() const override;
     qint64 size() const override;
 
+    qint64 get_read_data_len();
     bool get_clip();
     qint64 get_clip_len();
     qreal get_peak();
     int get_buffer_size();
+    int get_sample_rate();
+    int get_channel_bytes();
+    int get_channel_count();
+    int get_sample_format();
+    bool get_sample_little_endian();
 
     void set_arpeggio_enabled(bool v);
     void set_arpeggio_samples(int v);
@@ -72,7 +77,8 @@ public:
     void pitch(int vid, float f);
 
 signals:
-    void valuesUpdated();
+    void sampleUpdated();
+    void formatUpdated();
 
 public slots:
     void noteOn(int vid, float f);
@@ -83,7 +89,7 @@ private:
     int BufferSize;
     int channelBytes;
     int channelCount;
-    int sampleType;
+    int sampleFormat;
     bool sampleLittleEndian;
 
     qint64 readDataLen;
@@ -98,7 +104,6 @@ private:
     QAudioSink *m_audioOutput;
     QIODevice *m_output; // not owned
     QAudioFormat m_format;
-    //QAudioDevice m_device;
 
     QTimer sampleTimer;
 
@@ -109,4 +114,3 @@ private:
 };
 
 #endif // QT68WRAPER_H
-#endif // Q_OS_IOS
