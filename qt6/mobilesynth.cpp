@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QtEndian>
 #include <QtMath>
+#include <QVariant>
 
 void MobileSynth::noteOn(int vid, float f)
 {
@@ -240,7 +241,9 @@ void MobileSynth::set_filter_release(long value)
 
 MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new QTimer(this))
 {
+    m_generator.reset(new Qt68Wraper());
     initializeAudio(m_devices->defaultAudioOutput());
+    toggleMode();
 }
 
 MobileSynth::~MobileSynth()
@@ -252,7 +255,6 @@ void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
 {
     QAudioFormat format = deviceInfo.preferredFormat();
 
-    m_generator.reset(new Qt68Wraper());
     m_audioOutput.reset(new QAudioSink(deviceInfo, format));
     m_generator->start();
 
@@ -264,18 +266,17 @@ void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
                                                 QAudio::LogarithmicVolumeScale);
     m_volumeSlider->setValue(qRound(initialVolume * 100));
     */
-    toggleMode();
 }
 
-/*
 void MobileSynth::deviceChanged(int index)
 {
+    qDebug() << "deviceChanged " << index;
     m_generator->stop();
     m_audioOutput->stop();
     m_audioOutput->disconnect(this);
-    initializeAudio(m_deviceBox->itemData(index).value<QAudioDevice>());
+    m_generator->disconnect(this);
+    initializeAudio(m_devices->audioOutputs().at(index));
 }
-*/
 
 void MobileSynth::volumeChanged(int value)
 {
@@ -285,15 +286,16 @@ void MobileSynth::volumeChanged(int value)
     m_audioOutput->setVolume(linearVolume);
 }
 
-/*
-void MobileSynth::updateAudioDevices()
+QStringList MobileSynth::deviceList()
 {
-    m_deviceBox->clear();
+    QStringList l;
+
     const QList<QAudioDevice> devices = m_devices->audioOutputs();
-    for (const QAudioDevice &deviceInfo : devices)
-        m_deviceBox->addItem(deviceInfo.description(), QVariant::fromValue(deviceInfo));
+    for (const QAudioDevice &deviceInfo : devices) {
+        l.append(deviceInfo.description());
+    }
+    return l;
 }
-*/
 
 void MobileSynth::toggleMode()
 {

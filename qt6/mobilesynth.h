@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE void set_filter_sustain(float value);
     Q_INVOKABLE void set_filter_release(long value);
     Q_INVOKABLE void pitch(int vid, float f);
+    Q_INVOKABLE void deviceChanged(int index);
 
     Q_PROPERTY(bool clip READ get_clip NOTIFY sampleUpdated);
     Q_PROPERTY(qint64 clipLen READ get_clip_len NOTIFY sampleUpdated);
@@ -62,6 +63,8 @@ public:
     Q_PROPERTY(int channelCount READ get_channel_count NOTIFY formatUpdated);
     Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
     Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
+
+    Q_PROPERTY(QStringList deviceList READ deviceList() CONSTANT);
 
 signals:
     void sampleUpdated();
@@ -96,9 +99,8 @@ private:
 private slots:
     void toggleMode();
     void toggleSuspendResume();
-    //void deviceChanged(int index);
     void volumeChanged(int);
-    //void updateAudioDevices();
+    QStringList deviceList();
 };
 
 #endif // MOBILESYNTH_H
