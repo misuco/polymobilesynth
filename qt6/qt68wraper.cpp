@@ -23,10 +23,10 @@ Qt68Wraper::Qt68Wraper()
 
     QAudioDevice info(QMediaDevices::defaultAudioOutput());
     m_format=info.preferredFormat();
-    qDebug() << ">>>>" << info.id() << " " << info.description() ;
+    qDebug() << "defaultAudioOutput: " << info.id() << " " << info.description() ;
     qDebug() << "Preferred format is sr " << m_format.sampleRate() << " sn " << m_format.bytesPerSample() << " ch " << m_format.channelCount() << " sample format " << m_format.sampleFormat();
 
-    DataSampleRateHz  = m_format.sampleRate();
+    setFormat(m_format);
 
     for(int i=0;i<VoiceCount;i++) {
         synth::Controller * sc = new synth::Controller();
@@ -51,15 +51,8 @@ Qt68Wraper::Qt68Wraper()
         VoiceMap.append( 0 );
         VoiceFreqMap.append( 0 );
     }
-
-    channelBytes = m_format.bytesPerSample();
-    channelCount = m_format.channelCount();
-    sampleFormat = m_format.sampleFormat();// == QAudioFormat::UInt8 ? 0 : 1;
-    sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
-
     arpeggioEnabled = false;
 
-    qDebug() << "sampleType " <<  sampleFormat << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
 }
 
 Qt68Wraper::~Qt68Wraper()
@@ -73,6 +66,16 @@ Qt68Wraper::~Qt68Wraper()
     VoiceMap.clear();
     VoiceFreqMap.clear();
     delete(m_audioOutput);
+}
+
+void Qt68Wraper::setFormat(const QAudioFormat& format) {
+    DataSampleRateHz  = format.sampleRate();
+    channelBytes = format.bytesPerSample();
+    channelCount = format.channelCount();
+    sampleFormat = format.sampleFormat();
+    sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
+    qDebug() << "sampleType " <<  sampleFormat << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
+    emit formatUpdated();
 }
 
 void Qt68Wraper::start()

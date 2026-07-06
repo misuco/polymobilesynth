@@ -76,6 +76,8 @@ public:
 
     void pitch(int vid, float f);
 
+    void setFormat(const QAudioFormat &format);
+
 signals:
     void sampleUpdated();
     void formatUpdated();

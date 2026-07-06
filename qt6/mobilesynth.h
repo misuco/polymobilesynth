@@ -53,6 +53,10 @@ public:
     Q_INVOKABLE void set_filter_release(long value);
     Q_INVOKABLE void pitch(int vid, float f);
     Q_INVOKABLE void deviceChanged(int index);
+    Q_INVOKABLE void suspendAudio();
+    Q_INVOKABLE void resumeAudio();
+    Q_INVOKABLE void pull_mode();
+    Q_INVOKABLE void push_mode();
 
     Q_PROPERTY(bool clip READ get_clip NOTIFY sampleUpdated);
     Q_PROPERTY(qint64 clipLen READ get_clip_len NOTIFY sampleUpdated);
@@ -64,11 +68,16 @@ public:
     Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
     Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
 
+    Q_PROPERTY(int audioState READ get_state NOTIFY stateChanged);
+    Q_PROPERTY(bool pullMode MEMBER m_pullMode NOTIFY pullModeChanged);
+
     Q_PROPERTY(QStringList deviceList READ deviceList() CONSTANT);
 
 signals:
     void sampleUpdated();
     void formatUpdated();
+    void stateChanged();
+    void pullModeChanged();
 
 private:
     void initializeAudio(const QAudioDevice &deviceInfo);
@@ -95,12 +104,12 @@ private:
     int get_channel_count();
     int get_sample_format();
     bool get_sample_little_endian();
+    int get_state();
+
+    QStringList deviceList();
 
 private slots:
-    void toggleMode();
-    void toggleSuspendResume();
     void volumeChanged(int);
-    QStringList deviceList();
 };
 
 #endif // MOBILESYNTH_H

@@ -242,8 +242,11 @@ void MobileSynth::set_filter_release(long value)
 MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new QTimer(this))
 {
     m_generator.reset(new Qt68Wraper());
+
+    QObject::connect(m_generator.get(), &Qt68Wraper::sampleUpdated, this, [this]{emit sampleUpdated();});
+    QObject::connect(m_generator.get(), &Qt68Wraper::formatUpdated, this, [this]{emit formatUpdated();});
+
     initializeAudio(m_devices->defaultAudioOutput());
-    toggleMode();
 }
 
 MobileSynth::~MobileSynth()
@@ -256,10 +259,16 @@ void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
     QAudioFormat format = deviceInfo.preferredFormat();
 
     m_audioOutput.reset(new QAudioSink(deviceInfo, format));
+    m_generator->setFormat(format);
     m_generator->start();
 
-    QObject::connect(m_generator.get(), &Qt68Wraper::sampleUpdated, this, [this]{emit sampleUpdated();});
-    QObject::connect(m_generator.get(), &Qt68Wraper::formatUpdated, this, [this]{emit formatUpdated();});
+    if(m_pullMode) {
+        pull_mode();
+    } else {
+        push_mode();
+    }
+
+    emit formatUpdated();
 
     /*
     qreal initialVolume = QAudio::convertVolume(m_audioOutput->volume(), QAudio::LinearVolumeScale,
@@ -268,13 +277,20 @@ void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
     */
 }
 
+int MobileSynth::get_state()
+{
+    return m_audioOutput->state();
+}
+
 void MobileSynth::deviceChanged(int index)
 {
     qDebug() << "deviceChanged " << index;
+
     m_generator->stop();
     m_audioOutput->stop();
     m_audioOutput->disconnect(this);
     m_generator->disconnect(this);
+
     initializeAudio(m_devices->audioOutputs().at(index));
 }
 
@@ -297,52 +313,64 @@ QStringList MobileSynth::deviceList()
     return l;
 }
 
-void MobileSynth::toggleMode()
+void MobileSynth::pull_mode()
 {
     m_pushTimer->stop();
+
     // Reset audiosink
     m_audioOutput->reset();
-    toggleSuspendResume();
 
-    if (m_pullMode) {
-        // switch to pull mode (QAudioSink pulls from Generator as needed)
-        //m_modeButton->setText(tr("Enable push mode"));
-        m_audioOutput->start(m_generator.data());
-    } else {
-        // switch to push mode (periodically push to QAudioSink using a timer)
-        //m_modeButton->setText(tr("Enable pull mode"));
-        auto io = m_audioOutput->start();
-        m_pushTimer->disconnect();
+    resumeAudio();
 
-        connect(m_pushTimer, &QTimer::timeout, [this, io]() {
-            if (m_audioOutput->state() == QAudio::StoppedState)
-                return;
+    // switch to pull mode (QAudioSink pulls from Generator as needed)
+    m_audioOutput->start(m_generator.data());
 
-            int len = m_audioOutput->bytesFree();
-            QByteArray buffer(len, 0);
-            len = m_generator->read(buffer.data(), len);
-            if (len)
-                io->write(buffer.data(), len);
-        });
+    m_pullMode = true;
 
-        m_pushTimer->start(10);
-    }
-
-    m_pullMode = !m_pullMode;
+    emit pullModeChanged();
 }
 
-void MobileSynth::toggleSuspendResume()
+
+void MobileSynth::push_mode()
 {
-    if (m_audioOutput->state() == QAudio::SuspendedState
-        || m_audioOutput->state() == QAudio::StoppedState) {
-        m_audioOutput->resume();
-        //m_suspendResumeButton->setText(tr("Suspend playback"));
-    } else if (m_audioOutput->state() == QAudio::ActiveState) {
-        m_audioOutput->suspend();
-        //m_suspendResumeButton->setText(tr("Resume playback"));
-    } else if (m_audioOutput->state() == QAudio::IdleState) {
-        // no-op
-    }
+    m_pushTimer->stop();
+
+    // Reset audiosink
+    m_audioOutput->reset();
+
+    resumeAudio();
+
+    // switch to push mode (periodically push to QAudioSink using a timer)
+    auto io = m_audioOutput->start();
+    m_pushTimer->disconnect();
+
+    connect(m_pushTimer, &QTimer::timeout, [this, io]() {
+        if (m_audioOutput->state() == QAudio::StoppedState)
+            return;
+
+        int len = m_audioOutput->bytesFree();
+        QByteArray buffer(len, 0);
+        len = m_generator->read(buffer.data(), len);
+        if (len)
+            io->write(buffer.data(), len);
+    });
+
+    m_pushTimer->start(10);
+
+    m_pullMode = false;
+    emit pullModeChanged();
+}
+
+void MobileSynth::suspendAudio()
+{
+    m_audioOutput->suspend();
+    emit stateChanged();
+}
+
+void MobileSynth::resumeAudio()
+{
+    m_audioOutput->resume();
+    emit stateChanged();
 }
 
 //#include "moc_audiooutput.cpp"
