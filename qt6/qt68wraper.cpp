@@ -198,6 +198,12 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                     len -= channelBytes;
                 }
             }
+        } else {
+            while (len>0) {
+                *ptr = 0;
+                ptr++;
+                len--;
+            }
         }
     }
 
