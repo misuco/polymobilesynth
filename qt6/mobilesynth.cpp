@@ -381,7 +381,7 @@ void MobileSynth::push_mode()
     auto io = m_audioOutput->start();
     m_pushTimer->disconnect();
 
-    connect(m_pushTimer, &QTimer::timeout, [this, io]() {
+    QObject::connect(m_pushTimer, &QTimer::timeout, this, [this, io]() {
         if (m_audioOutput->state() == QAudio::StoppedState)
             return;
 

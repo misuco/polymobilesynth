@@ -2,11 +2,10 @@
 // Copyright (C) 2024 c1audio.com / Claudio Zopfi <c1audio@x21.ch>
 // SPDX-License-Identifier: GPL-3.0
 
-#include <QtGlobal>
-
 #ifndef QT68WRAPER_H
 #define QT68WRAPER_H
 
+#include <QtGlobal>
 #include <QAudioFormat>
 #include <QAudioOutput>
 #include <QAudioDevice>

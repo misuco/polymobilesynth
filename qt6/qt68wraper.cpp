@@ -58,7 +58,7 @@ Qt68Wraper::~Qt68Wraper()
 {
     //m_audioOutput->stop();
     this->stop();
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         delete(voice);
     }
     syctl.clear();
@@ -97,7 +97,7 @@ qreal Qt68Wraper::GetSampleSum() {
 
     // mix the value of all synth voices
     qreal x=0;
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         x+=voice->GetSample();
     }
     x = fmaxf(-1.0f, x);
@@ -303,14 +303,14 @@ void Qt68Wraper::set_arpeggio_enabled(bool v)
 
 void Qt68Wraper::set_arpeggio_samples(int v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_arpeggio_samples(v);
     }
 }
 
 void Qt68Wraper::set_arpeggio_octaves(int v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_arpeggio_octaves(v);
     }
 }
@@ -334,154 +334,154 @@ void Qt68Wraper::set_arpeggio_step(int v)
         break;
     }
 
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_arpeggio_step(step);
     }
 }
 
 void Qt68Wraper::set_filter_cutoff(int v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_filter_cutoff(v);
     }
 }
 
 void Qt68Wraper::set_filter_resonance(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_filter_resonance(v);
     }
 }
 
 void Qt68Wraper::set_osc1_level(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc1_level(v);
     }
 }
 
 void Qt68Wraper::set_osc1_wave_type(synth::Oscillator::WaveType v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc1_wave_type(v);
     }
 }
 
 void Qt68Wraper::set_osc1_octave(synth::Controller::OctaveShift v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc1_octave(v);
     }
 }
 
 void Qt68Wraper::set_osc2_level(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc2_level(v);
     }
 }
 
 void Qt68Wraper::set_osc2_wave_type(synth::Oscillator::WaveType v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc2_wave_type(v);
     }
 }
 
 void Qt68Wraper::set_osc2_octave(synth::Controller::OctaveShift v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc2_octave(v);
     }
 }
 
 void Qt68Wraper::set_osc2_shift(int v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_osc2_shift(v);
     }
 }
 
 void Qt68Wraper::set_modulation_source(synth::Controller::ModulationSource v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_modulation_source(v);
     }
 }
 
 void Qt68Wraper::set_modulation_destination(synth::Controller::ModulationDestination v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_modulation_destination(v);
     }
 }
 
 void Qt68Wraper::set_modulation_amount(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_modulation_amount(v);
     }
 }
 
 void Qt68Wraper::set_modulation_frequency(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->set_modulation_frequency(v);
     }
 }
 
 void Qt68Wraper::set_volume_attack(long v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->volume_envelope()->set_attack(v);
     }
 }
 
 void Qt68Wraper::set_volume_decay(long v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->volume_envelope()->set_decay(v);
     }
 }
 
 void Qt68Wraper::set_volume_sustain(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->volume_envelope()->set_sustain(v);
     }
 }
 
 void Qt68Wraper::set_volume_release(long v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->volume_envelope()->set_release(v);
     }
 }
 
 void Qt68Wraper::set_filter_attack(long v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->filter_envelope()->set_attack(v);
     }
 }
 
 void Qt68Wraper::set_filter_decay(long v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->filter_envelope()->set_decay(v);
     }
 }
 
 void Qt68Wraper::set_filter_sustain(float v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->filter_envelope()->set_sustain(v);
     }
 }
 
 void Qt68Wraper::set_filter_release(long v)
 {
-    for(auto voice:syctl) {
+    for(const auto voice:std::as_const(syctl)) {
         voice->filter_envelope()->set_release(v);
     }
 }
