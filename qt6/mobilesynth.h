@@ -69,6 +69,8 @@ public:
     Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
     Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
     Q_PROPERTY(int bufferSize READ get_buffer_size NOTIFY bufferSizeChanged);
+    Q_PROPERTY(int bufferBytesFree READ get_buffer_bytes_free NOTIFY sampleUpdated);
+    Q_PROPERTY(int bufferFrameCount READ get_buffer_frame_count NOTIFY formatUpdated);
 
     Q_PROPERTY(int audioState READ get_state NOTIFY stateChanged);
     Q_PROPERTY(bool pullMode MEMBER m_pullMode NOTIFY pullModeChanged);
@@ -105,6 +107,8 @@ private:
     qint64 get_clip_len();
     qreal get_peak();
     int get_buffer_size();
+    int get_buffer_bytes_free();
+    int get_buffer_frame_count();
     int get_sample_rate();
     int get_channel_bytes();
     int get_channel_count();

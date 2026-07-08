@@ -129,6 +129,16 @@ int MobileSynth::get_buffer_size()
     return m_audioOutput->bufferSize();
 }
 
+int MobileSynth::get_buffer_bytes_free()
+{
+    return m_audioOutput->bytesFree();
+}
+
+int MobileSynth::get_buffer_frame_count()
+{
+    return m_audioOutput->bufferFrameCount();
+}
+
 int MobileSynth::get_sample_rate()
 {
     return m_generator->get_sample_rate();
