@@ -269,6 +269,8 @@ void MobileSynth::initializeAudio()
 
     m_audioOutput.reset(new QAudioSink(m_device_info, format));
 
+    QObject::connect(m_audioOutput.get(), &QAudioSink::stateChanged, this, [this]{emit stateChanged();});
+
     m_generator->setFormat(format);
     m_generator->start();
 
@@ -333,8 +335,6 @@ void MobileSynth::pull_mode()
     // Reset audiosink
     m_audioOutput->reset();
 
-    //resumeAudio();
-
     // switch to pull mode (QAudioSink pulls from Generator as needed)
     m_audioOutput->start(m_generator.data());
 
@@ -350,8 +350,6 @@ void MobileSynth::push_mode()
 
     // Reset audiosink
     m_audioOutput->reset();
-
-    //resumeAudio();
 
     // switch to push mode (periodically push to QAudioSink using a timer)
     auto io = m_audioOutput->start();
@@ -386,13 +384,11 @@ void MobileSynth::set_buffer_size(int v)
 void MobileSynth::suspendAudio()
 {
     m_audioOutput->suspend();
-    emit stateChanged();
 }
 
 void MobileSynth::resumeAudio()
 {
     m_audioOutput->resume();
-    emit stateChanged();
 }
 
 //#include "moc_audiooutput.cpp"
