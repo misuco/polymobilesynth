@@ -74,7 +74,6 @@ void Qt68Wraper::setFormat(const QAudioFormat& format) {
     sampleFormat = format.sampleFormat();
     sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
     qDebug() << "sampleType " <<  sampleFormat << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
-    emit formatUpdated();
 }
 
 void Qt68Wraper::setBufferSize(int s)

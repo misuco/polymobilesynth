@@ -249,7 +249,6 @@ MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new
     m_generator.reset(new Qt68Wraper());
 
     QObject::connect(m_generator.get(), &Qt68Wraper::sampleUpdated, this, [this]{emit sampleUpdated();});
-    QObject::connect(m_generator.get(), &Qt68Wraper::formatUpdated, this, [this]{emit formatUpdated();});
 
     m_device_info = m_devices->defaultAudioOutput();
     m_buffer_size = 512;

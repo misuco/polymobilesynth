@@ -80,7 +80,6 @@ public:
 
 signals:
     void sampleUpdated();
-    void formatUpdated();
 
 public slots:
     void noteOn(int vid, float f);
