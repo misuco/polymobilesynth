@@ -126,9 +126,8 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
 
     if(channelBytes>0) {
         unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
-        //int sampleBytes = channelCount * channelBytes;
 
-        if (channelBytes == 1 && sampleFormat == 0 /* QAudioFormat::UnSignedInt */) {
+        if (channelBytes == 1 && sampleFormat == 1 /* QAudioFormat::UInt8 */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -140,44 +139,7 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                     len -= channelBytes;
                 }
             }
-        } else if (channelBytes == 1  && sampleFormat == 1 /* QAudioFormat::SignedInt */) {
-            while (len>0) {
-                qreal x=GetSampleSum();
-
-                for(int i=0;i<channelCount;i++) {
-                    const qint8 value = static_cast<qint8>(x * 127);
-                    *reinterpret_cast<quint8*>(ptr) = value;
-
-                    ptr += channelBytes;
-                    len -= channelBytes;
-                }
-            }
-
-        } else if (channelBytes == 2 && sampleFormat == 0 && sampleLittleEndian == true /* QAudioFormat::UnSignedInt */) {
-            while (len>0) {
-                qreal x=GetSampleSum();
-
-                for(int i=0;i<channelCount;i++) {
-                    quint16 value = static_cast<quint16>((1.0 + x) / 2 * 65535);
-                    qToLittleEndian<quint16>(value, ptr);
-
-                    ptr += channelBytes;
-                    len -= channelBytes;
-                }
-            }
-        } else if (channelBytes == 2 && sampleFormat == 0 && sampleLittleEndian == false /* QAudioFormat::UnSignedInt */) {
-            while (len>0) {
-                qreal x=GetSampleSum();
-
-                for(int i=0;i<channelCount;i++) {
-                    quint16 value = static_cast<quint16>((1.0 + x) / 2 * 65535);
-                    qToBigEndian<quint16>(value, ptr);
-
-                    ptr += channelBytes;
-                    len -= channelBytes;
-                }
-            }
-        } else if (channelBytes == 2 && sampleFormat == 1 && sampleLittleEndian == true  /* QAudioFormat::SignedInt */) {
+        } else if (channelBytes == 2 && sampleFormat == 2 && sampleLittleEndian == true  /* QAudioFormat::Int16 */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
@@ -189,13 +151,37 @@ qint64 Qt68Wraper::readData(char *data, qint64 len)
                     len -= channelBytes;
                 }
             }
-        } else if (channelBytes == 2 && sampleFormat == 1 && sampleLittleEndian == false  /* QAudioFormat::SignedInt */) {
+        } else if (channelBytes == 2 && sampleFormat == 2 && sampleLittleEndian == false  /* QAudioFormat::Int16 */) {
             while (len>0) {
                 qreal x=GetSampleSum();
 
                 for(int i=0;i<channelCount;i++) {
                     qint16 value = static_cast<qint16>(x * 32767);
                     qToBigEndian<qint16>(value, ptr);
+
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
+            }
+        } else if (channelBytes == 4 && sampleFormat == 3 && sampleLittleEndian == true  /* QAudioFormat::Int32 */) {
+            while (len>0) {
+                qreal x=GetSampleSum();
+
+                for(int i=0;i<channelCount;i++) {
+                    qint32 value = static_cast<qint32>(x * 2147483647);
+                    qToLittleEndian<qint32>(value, ptr);
+
+                    ptr += channelBytes;
+                    len -= channelBytes;
+                }
+            }
+        } else if (channelBytes == 4 && sampleFormat == 3 && sampleLittleEndian == false  /* QAudioFormat::Int32 */) {
+            while (len>0) {
+                qreal x=GetSampleSum();
+
+                for(int i=0;i<channelCount;i++) {
+                    qint32 value = static_cast<qint32>(x * 2147483647);
+                    qToBigEndian<qint32>(value, ptr);
 
                     ptr += channelBytes;
                     len -= channelBytes;
