@@ -41,7 +41,6 @@ public:
     bool get_clip();
     qint64 get_clip_len();
     qreal get_peak();
-    int get_buffer_size();
     int get_sample_rate();
     int get_channel_bytes();
     int get_channel_count();
@@ -77,6 +76,7 @@ public:
     void pitch(int vid, float f);
 
     void setFormat(const QAudioFormat &format);
+    void setBufferSize(int s);
 
 signals:
     void sampleUpdated();

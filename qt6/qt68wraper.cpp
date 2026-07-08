@@ -18,7 +18,6 @@
 Qt68Wraper::Qt68Wraper()
     :   QIODevice()
 {
-    BufferSize = 1024;
     VoiceCount = 16;
 
     QAudioDevice info(QMediaDevices::defaultAudioOutput());
@@ -76,6 +75,11 @@ void Qt68Wraper::setFormat(const QAudioFormat& format) {
     sampleLittleEndian = QSysInfo::ByteOrder == 1 ? true : false;
     qDebug() << "sampleType " <<  sampleFormat << " channelCount " << channelCount << " channelBytes " << channelBytes << " sampleLittleEndian " << sampleLittleEndian;
     emit formatUpdated();
+}
+
+void Qt68Wraper::setBufferSize(int s)
+{
+    BufferSize=s;
 }
 
 void Qt68Wraper::start()
@@ -228,14 +232,12 @@ qint64 Qt68Wraper::writeData(const char *data, qint64 len)
 
 qint64 Qt68Wraper::bytesAvailable() const
 {
-    //qDebug() << "mobileSynthQT68::bytesAvailable";
-    return 16384;
+    return BufferSize;
 }
 
 qint64 Qt68Wraper::size() const
 {
-    //qDebug() << "mobileSynthQT68::size";
-    return 16384;
+    return BufferSize;
 }
 
 qint64 Qt68Wraper::get_read_data_len()
@@ -256,11 +258,6 @@ qint64 Qt68Wraper::get_clip_len()
 qreal Qt68Wraper::get_peak()
 {
     return peakValue;
-}
-
-int Qt68Wraper::get_buffer_size()
-{
-    return BufferSize;
 }
 
 int Qt68Wraper::get_sample_rate()

@@ -57,6 +57,7 @@ public:
     Q_INVOKABLE void resumeAudio();
     Q_INVOKABLE void pull_mode();
     Q_INVOKABLE void push_mode();
+    Q_INVOKABLE void set_buffer_size(int v);
 
     Q_PROPERTY(bool clip READ get_clip NOTIFY sampleUpdated);
     Q_PROPERTY(qint64 clipLen READ get_clip_len NOTIFY sampleUpdated);
@@ -67,6 +68,7 @@ public:
     Q_PROPERTY(int channelCount READ get_channel_count NOTIFY formatUpdated);
     Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
     Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
+    Q_PROPERTY(int bufferSize READ get_buffer_size NOTIFY bufferSizeChanged);
 
     Q_PROPERTY(int audioState READ get_state NOTIFY stateChanged);
     Q_PROPERTY(bool pullMode MEMBER m_pullMode NOTIFY pullModeChanged);
@@ -78,13 +80,17 @@ signals:
     void formatUpdated();
     void stateChanged();
     void pullModeChanged();
+    void bufferSizeChanged();
 
 private:
-    void initializeAudio(const QAudioDevice &deviceInfo);
+    void initializeAudio();
 
 private:
     QMediaDevices *m_devices = nullptr;
     QTimer *m_pushTimer = nullptr;
+
+    QAudioDevice m_device_info;
+    int m_buffer_size;
 
     QScopedPointer<Qt68Wraper> m_generator;
     QScopedPointer<QAudioSink> m_audioOutput;

@@ -124,6 +124,11 @@ qreal MobileSynth::get_peak()
     return m_generator->get_peak();
 }
 
+int MobileSynth::get_buffer_size()
+{
+    return m_audioOutput->bufferSize();
+}
+
 int MobileSynth::get_sample_rate()
 {
     return m_generator->get_sample_rate();
@@ -246,7 +251,9 @@ MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new
     QObject::connect(m_generator.get(), &Qt68Wraper::sampleUpdated, this, [this]{emit sampleUpdated();});
     QObject::connect(m_generator.get(), &Qt68Wraper::formatUpdated, this, [this]{emit formatUpdated();});
 
-    initializeAudio(m_devices->defaultAudioOutput());
+    m_device_info = m_devices->defaultAudioOutput();
+    m_buffer_size = 512;
+    initializeAudio();
 }
 
 MobileSynth::~MobileSynth()
@@ -254,13 +261,19 @@ MobileSynth::~MobileSynth()
     m_pushTimer->stop();
 }
 
-void MobileSynth::initializeAudio(const QAudioDevice &deviceInfo)
+void MobileSynth::initializeAudio()
 {
-    QAudioFormat format = deviceInfo.preferredFormat();
+    QAudioFormat format = m_device_info.preferredFormat();
 
-    m_audioOutput.reset(new QAudioSink(deviceInfo, format));
+    qDebug() << "defaultAudioOutput: " << m_device_info.id() << " " << m_device_info.description() ;
+    qDebug() << "Preferred format is sr " << format.sampleRate() << " sn " << format.bytesPerSample() << " ch " << format.channelCount() << " sample format " << format.sampleFormat();
+
+    m_audioOutput.reset(new QAudioSink(m_device_info, format));
+
     m_generator->setFormat(format);
     m_generator->start();
+
+    m_audioOutput->setBufferSize(m_buffer_size);
 
     if(m_pullMode) {
         pull_mode();
@@ -288,10 +301,11 @@ void MobileSynth::deviceChanged(int index)
 
     m_generator->stop();
     m_audioOutput->stop();
-    m_audioOutput->disconnect(this);
-    m_generator->disconnect(this);
+    //m_audioOutput->disconnect(this);
+    //m_generator->disconnect(this);
 
-    initializeAudio(m_devices->audioOutputs().at(index));
+    m_device_info = m_devices->audioOutputs().at(index);
+    initializeAudio();
 }
 
 void MobileSynth::volumeChanged(int value)
@@ -320,7 +334,7 @@ void MobileSynth::pull_mode()
     // Reset audiosink
     m_audioOutput->reset();
 
-    resumeAudio();
+    //resumeAudio();
 
     // switch to pull mode (QAudioSink pulls from Generator as needed)
     m_audioOutput->start(m_generator.data());
@@ -338,7 +352,7 @@ void MobileSynth::push_mode()
     // Reset audiosink
     m_audioOutput->reset();
 
-    resumeAudio();
+    //resumeAudio();
 
     // switch to push mode (periodically push to QAudioSink using a timer)
     auto io = m_audioOutput->start();
@@ -359,6 +373,15 @@ void MobileSynth::push_mode()
 
     m_pullMode = false;
     emit pullModeChanged();
+}
+
+void MobileSynth::set_buffer_size(int v)
+{
+    qDebug() << "set_buffer_size " << v;
+    m_buffer_size = v * get_channel_count();
+    m_generator->setBufferSize(v);
+    initializeAudio();
+    emit bufferSizeChanged();
 }
 
 void MobileSynth::suspendAudio()
