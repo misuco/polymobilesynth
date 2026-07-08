@@ -74,6 +74,7 @@ public:
 
     Q_PROPERTY(int audioState READ get_state NOTIFY stateChanged);
     Q_PROPERTY(bool pullMode MEMBER m_pullMode NOTIFY pullModeChanged);
+    Q_PROPERTY(int audioDeviceIndex MEMBER m_audio_device_index NOTIFY formatUpdated);
 
     Q_PROPERTY(QStringList deviceList READ deviceList() CONSTANT);
 
@@ -97,7 +98,14 @@ private:
     QScopedPointer<Qt68Wraper> m_generator;
     QScopedPointer<QAudioSink> m_audioOutput;
 
-    bool m_pullMode = true;
+    bool m_pullMode;
+
+    //! Audio device index
+    /*!
+      Contains the index of the activ audio device in the deviceList
+      Is used to select the default device in the AudioDevice.qml view
+    */
+    int m_audio_device_index;
 
     synth::Oscillator::WaveType int2wavetype(int value);
     synth::Controller::OctaveShift int2octaveshift(int value);
@@ -115,6 +123,7 @@ private:
     int get_sample_format();
     bool get_sample_little_endian();
     int get_state();
+    void set_audio_device_index();
 
     QStringList deviceList();
 

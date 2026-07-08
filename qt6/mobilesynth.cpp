@@ -261,7 +261,10 @@ MobileSynth::MobileSynth() : m_devices(new QMediaDevices(this)), m_pushTimer(new
     QObject::connect(m_generator.get(), &Qt68Wraper::sampleUpdated, this, [this]{emit sampleUpdated();});
 
     m_device_info = m_devices->defaultAudioOutput();
+    set_audio_device_index();
+
     m_buffer_size = 512;
+    m_pullMode = true;
     initializeAudio();
 }
 
@@ -306,16 +309,29 @@ int MobileSynth::get_state()
     return m_audioOutput->state();
 }
 
+void MobileSynth::set_audio_device_index()
+{
+    const QList<QAudioDevice> devices = m_devices->audioOutputs();
+    int index=0;
+    for (const QAudioDevice &deviceInfo : devices) {
+        if(deviceInfo.description()==m_device_info.description()) {
+            m_audio_device_index=index;
+            break;
+        }
+        index++;
+    }
+}
+
 void MobileSynth::deviceChanged(int index)
 {
     qDebug() << "deviceChanged " << index;
 
     m_generator->stop();
     m_audioOutput->stop();
-    //m_audioOutput->disconnect(this);
-    //m_generator->disconnect(this);
 
     m_device_info = m_devices->audioOutputs().at(index);
+    m_audio_device_index = index;
+
     initializeAudio();
 }
 
