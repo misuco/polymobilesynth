@@ -492,7 +492,7 @@ void Qt68Wraper::pitch(int vid, float f)
         if(VoiceMap[i]==vid) {
             syctl.at(i)->Pitch(f);
             qDebug() << "mobileSynthQT68::pitch vid: " << vid << "mapid: " << i << " f: " << f;
-            break;
+            return;
         }
     }
     qDebug() << "mobileSynthQT68::pitch ignored: vid: " << vid << " f: " << f;
