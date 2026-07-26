@@ -4,6 +4,8 @@
 #ifndef MOBILESYNTH_H
 #define MOBILESYNTH_H
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 #include <QAudioSink>
 #include <QByteArray>
 #include <QIODevice>
@@ -19,6 +21,28 @@
 class MobileSynth : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(bool clip READ get_clip NOTIFY sampleUpdated);
+    Q_PROPERTY(qint64 clipLen READ get_clip_len NOTIFY sampleUpdated);
+    Q_PROPERTY(qreal peak READ get_peak NOTIFY sampleUpdated);
+    Q_PROPERTY(int readDataLen READ get_read_data_len NOTIFY sampleUpdated);
+    Q_PROPERTY(int sampleRate READ get_sample_rate NOTIFY formatUpdated);
+    Q_PROPERTY(int channelBytes READ get_channel_bytes NOTIFY formatUpdated);
+    Q_PROPERTY(int channelCount READ get_channel_count NOTIFY formatUpdated);
+    Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
+    Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
+    Q_PROPERTY(int bufferSize READ get_buffer_size NOTIFY bufferSizeChanged);
+    Q_PROPERTY(int bufferBytesFree READ get_buffer_bytes_free NOTIFY sampleUpdated);
+    Q_PROPERTY(int bufferFrameCount READ get_buffer_frame_count NOTIFY formatUpdated);
+
+    Q_PROPERTY(int audioState READ get_state NOTIFY stateChanged);
+    Q_PROPERTY(bool pullMode MEMBER m_pullMode NOTIFY pullModeChanged);
+    Q_PROPERTY(int audioDeviceIndex MEMBER m_audio_device_index NOTIFY formatUpdated);
+
+    Q_PROPERTY(QStringList deviceList READ deviceList() CONSTANT);
+
+    QML_ELEMENT
+    QML_UNCREATABLE("Cannot instantiate MobileSynth")
 
 public:
     MobileSynth();
@@ -59,24 +83,7 @@ public:
     Q_INVOKABLE void push_mode();
     Q_INVOKABLE void set_buffer_size(int v);
 
-    Q_PROPERTY(bool clip READ get_clip NOTIFY sampleUpdated);
-    Q_PROPERTY(qint64 clipLen READ get_clip_len NOTIFY sampleUpdated);
-    Q_PROPERTY(qreal peak READ get_peak NOTIFY sampleUpdated);
-    Q_PROPERTY(int readDataLen READ get_read_data_len NOTIFY sampleUpdated);
-    Q_PROPERTY(int sampleRate READ get_sample_rate NOTIFY formatUpdated);
-    Q_PROPERTY(int channelBytes READ get_channel_bytes NOTIFY formatUpdated);
-    Q_PROPERTY(int channelCount READ get_channel_count NOTIFY formatUpdated);
-    Q_PROPERTY(int sampleFormat READ get_sample_format NOTIFY formatUpdated);
-    Q_PROPERTY(int sampleLittleEndian READ get_sample_little_endian NOTIFY formatUpdated);
-    Q_PROPERTY(int bufferSize READ get_buffer_size NOTIFY bufferSizeChanged);
-    Q_PROPERTY(int bufferBytesFree READ get_buffer_bytes_free NOTIFY sampleUpdated);
-    Q_PROPERTY(int bufferFrameCount READ get_buffer_frame_count NOTIFY formatUpdated);
 
-    Q_PROPERTY(int audioState READ get_state NOTIFY stateChanged);
-    Q_PROPERTY(bool pullMode MEMBER m_pullMode NOTIFY pullModeChanged);
-    Q_PROPERTY(int audioDeviceIndex MEMBER m_audio_device_index NOTIFY formatUpdated);
-
-    Q_PROPERTY(QStringList deviceList READ deviceList() CONSTANT);
 
 signals:
     void sampleUpdated();
