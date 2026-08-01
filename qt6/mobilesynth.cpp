@@ -194,6 +194,16 @@ void MobileSynth::set_osc2_shift(int value)
     m_generator->set_osc2_shift(value);
 }
 
+void MobileSynth::set_osc_sync(bool v)
+{
+    m_generator->set_osc_sync(v);
+}
+
+void MobileSynth::set_glide_samples(long v)
+{
+    m_generator->set_glide_samples(v);
+}
+
 void MobileSynth::set_modulation_source(int value)
 {
     m_generator->set_modulation_source(static_cast<synth::Controller::ModulationSource>(value));
@@ -207,6 +217,11 @@ void MobileSynth::set_modulation_destination(int value)
 void MobileSynth::set_modulation_amount(float value)
 {
     m_generator->set_modulation_amount(value);
+}
+
+void MobileSynth::set_modulation_amount(int voiceId, float value)
+{
+    m_generator->set_modulation_amount(voiceId,value);
 }
 
 void MobileSynth::set_modulation_frequency(float value)

@@ -63,9 +63,12 @@ public:
     Q_INVOKABLE void set_osc2_wave_type(int value);
     Q_INVOKABLE void set_osc2_octave(int octave);
     Q_INVOKABLE void set_osc2_shift(int value);
+    Q_INVOKABLE void set_osc_sync(bool v);
+    Q_INVOKABLE void set_glide_samples(long v);
     Q_INVOKABLE void set_modulation_source(int value);
     Q_INVOKABLE void set_modulation_destination(int value);
     Q_INVOKABLE void set_modulation_amount(float value);
+    Q_INVOKABLE void set_modulation_amount(int voiceId, float value);
     Q_INVOKABLE void set_modulation_frequency(float value);
     Q_INVOKABLE void set_volume_attack(long value);
     Q_INVOKABLE void set_volume_decay(long value);
@@ -82,8 +85,6 @@ public:
     Q_INVOKABLE void pull_mode();
     Q_INVOKABLE void push_mode();
     Q_INVOKABLE void set_buffer_size(int v);
-
-
 
 signals:
     void sampleUpdated();

@@ -59,9 +59,15 @@ public:
     void set_osc2_wave_type(synth::Oscillator::WaveType v);
     void set_osc2_octave(synth::Controller::OctaveShift v);
     void set_osc2_shift(int v);
+    void set_osc_sync(bool v);
+    void set_glide_samples(long v);
     void set_modulation_source(synth::Controller::ModulationSource v);
     void set_modulation_destination(synth::Controller::ModulationDestination v);
-    void set_modulation_amount(float v);
+
+    void set_modulation_amount(float value);
+
+    void set_modulation_amount(int voiceId, float value);
+
     void set_modulation_frequency(float v);
     void set_volume_attack(long v);
     void set_volume_decay(long v);
@@ -76,6 +82,7 @@ public:
 
     void setFormat(const QAudioFormat &format);
     void setBufferSize(int s);
+
 
 signals:
     void sampleUpdated();

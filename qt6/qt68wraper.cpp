@@ -402,6 +402,20 @@ void Qt68Wraper::set_osc2_shift(int v)
     }
 }
 
+void Qt68Wraper::set_osc_sync(bool v)
+{
+    for(const auto voice:std::as_const(syctl)) {
+        voice->set_osc_sync(v);
+    }
+}
+
+void Qt68Wraper::set_glide_samples(long v)
+{
+    for(const auto voice:std::as_const(syctl)) {
+        voice->set_glide_samples(v);
+    }
+}
+
 void Qt68Wraper::set_modulation_source(synth::Controller::ModulationSource v)
 {
     for(const auto voice:std::as_const(syctl)) {
@@ -416,10 +430,20 @@ void Qt68Wraper::set_modulation_destination(synth::Controller::ModulationDestina
     }
 }
 
-void Qt68Wraper::set_modulation_amount(float v)
+void Qt68Wraper::set_modulation_amount(float value)
 {
     for(const auto voice:std::as_const(syctl)) {
-        voice->set_modulation_amount(v);
+        voice->set_modulation_amount(value);
+    }
+}
+
+void Qt68Wraper::set_modulation_amount(int voiceId, float value)
+{
+    for(int i=0;i<VoiceMap.count();i++) {
+        if(VoiceMap.at(i)==voiceId) {
+            syctl.at(i)->set_modulation_amount(value);
+            break;
+        }
     }
 }
 
