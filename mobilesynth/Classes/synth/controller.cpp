@@ -233,7 +233,7 @@ void Controller::GetFloatSamples(float* buffer, int size) {
 }
 
 float Controller::GetSample() {
-  if (volume_envelope()->released() || filter_envelope()->released()) {
+  if (volume_envelope()->released()) {
     return 0;
   }
 
